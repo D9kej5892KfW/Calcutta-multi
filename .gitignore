@@ -1,0 +1,18 @@
+# Data and logs (exclude from version control)
+data/
+logs/
+temp/
+
+# Loki binary (downloaded file)
+bin/loki
+
+# Process files
+*.pid
+
+# Downloaded archives
+*.zip
+*.tar.gz
+
+# Temporary files
+*.tmp
+*.log
