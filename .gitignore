@@ -15,4 +15,5 @@ bin/loki
 
 # Temporary files
 *.tmp
-*.log
+*.logbin/grafana*
+bin/grafana-v*/

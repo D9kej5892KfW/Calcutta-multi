@@ -1,0 +1,1 @@
+config/claude/hooks/telemetry-hook.sh

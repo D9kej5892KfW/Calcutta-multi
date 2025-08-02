@@ -102,21 +102,20 @@ LOG_ENTRY=$(cat <<EOF
 EOF
 )
 
-# Create logs directory if it doesn't exist
-mkdir -p "$PROJECT_PATH/data/logs/archive"
+# Create logs directory if it doesn't exist (minimal backup only)
+mkdir -p "$PROJECT_PATH/data/logs"
 
-# Log to project-specific telemetry file (backup)
+# Keep minimal backup log (crash recovery only)
 echo "$LOG_ENTRY" >> "$PROJECT_PATH/data/logs/claude-telemetry.jsonl"
-
-# Also log to a daily file for easier management
-DATE_SUFFIX=$(date +%Y-%m-%d)
-echo "$LOG_ENTRY" >> "$PROJECT_PATH/data/logs/archive/claude-telemetry-$DATE_SUFFIX.jsonl"
 
 # Send to Loki if enabled
 if [[ "$TELEMETRY_ENABLED" == "true" ]]; then
     # Create Loki-compatible log entry
     LOKI_TIMESTAMP="${TIMESTAMP}Z"
     LOKI_TIMESTAMP_NS=$(date -d "$TIMESTAMP" +%s%N)
+    
+    # Create simplified log message for Loki
+    LOG_MESSAGE="tool:$TOOL_NAME event:$EVENT_TYPE session:$SESSION_ID"
     
     LOKI_PAYLOAD=$(cat <<EOF
 {
@@ -131,7 +130,7 @@ if [[ "$TELEMETRY_ENABLED" == "true" ]]; then
         "scope": "project"
       },
       "values": [
-        ["$LOKI_TIMESTAMP_NS", $(echo "$LOG_ENTRY" | jq -c .)]
+        ["$LOKI_TIMESTAMP_NS", "$LOG_MESSAGE"]
       ]
     }
   ]

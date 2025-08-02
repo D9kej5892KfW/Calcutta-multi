@@ -67,6 +67,8 @@ agent-telemetry/
 ├── scripts/                           # Management scripts
 │   ├── start-loki.sh                  # Start Loki service
 │   ├── stop-loki.sh                   # Stop Loki service
+│   ├── start-grafana.sh               # Start Grafana dashboard
+│   ├── stop-grafana.sh                # Stop Grafana dashboard
 │   ├── status.sh                      # Check system status
 │   └── query-examples.sh              # Example Loki queries
 └── temp/                              # Temporary/download files
@@ -89,9 +91,20 @@ agent-telemetry/
 ./scripts/query-examples.sh
 ```
 
-### 4. Stop Service
+### 4. Start Grafana Dashboard
+```bash
+./scripts/start-grafana.sh
+```
+
+### 5. Access Dashboard
+- **URL**: http://localhost:3000
+- **Login**: admin/admin
+- **Dashboard**: "Claude Agent Telemetry Dashboard"
+
+### 6. Stop Services
 ```bash
 ./scripts/stop-loki.sh
+./scripts/stop-grafana.sh
 ```
 
 ## 🔍 Query Examples
