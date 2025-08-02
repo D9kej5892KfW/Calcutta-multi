@@ -1,1 +1,0 @@
-Testing if the hook configuration fix resolves the path issue.

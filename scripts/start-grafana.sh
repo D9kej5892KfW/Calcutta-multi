@@ -1,4 +1,4 @@
-#\!/bin/bash
+#!/bin/bash
 # Start Grafana for Claude Agent Telemetry Dashboard
 
 PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -15,7 +15,7 @@ fi
 # Start Grafana
 echo "Starting Grafana server..."
 "$PROJECT_DIR/bin/grafana" server --config="$GRAFANA_CONFIG" --homepath="$PROJECT_DIR/bin/grafana-v11.1.0" > "$GRAFANA_LOG" 2>&1 &
-GRAFANA_PID=$\!
+GRAFANA_PID=$!
 
 # Save PID
 echo "$GRAFANA_PID" > "$PID_FILE"
@@ -31,4 +31,3 @@ else
     rm -f "$PID_FILE"
     exit 1
 fi
-EOF < /dev/null
