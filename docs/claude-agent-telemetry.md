@@ -3,60 +3,21 @@
 ## Project Overview
 A comprehensive security audit and monitoring system for Claude Code agent activities. This system provides real-time telemetry collection, structured logging, and centralized log aggregation to enable security monitoring, behavioral analysis, and forensic investigation of AI agent operations.
 
-**Problem Statement**: As AI agents become more prevalent in development workflows, there's a critical need to monitor their behavior, audit their actions, and ensure they operate within defined security boundaries. This includes both single-agent scenarios and complex multi-agent parallel deployments.
+**Problem Statement**: As AI agents become more prevalent in development workflows, there's a critical need to monitor their behavior, audit their actions, and ensure they operate within defined security boundaries.
 
-**Solution**: Dual-mode telemetry collection system using Claude Code hooks with scalable Loki storage backend and comprehensive Grafana dashboards for agent activity monitoring and analysis.
+**Solution**: Project-scoped telemetry collection using Claude Code hooks with Loki storage backend and performance-focused Grafana dashboard for comprehensive agent activity monitoring and analysis.
 
-**Current Status**: Fully operational with 13,000+ telemetry entries collected, active Loki service, and comprehensive Grafana dashboard. Multi-agent design complete and ready for implementation.
-
-## Architecture Modes
-
-### Mode 1: Single-Agent Monitoring (Current - Operational)
-- **Scope**: Project-scoped monitoring for individual Claude instances
-- **Storage**: Single Loki instance (localhost:3100)
-- **Use Case**: Individual development, single-project monitoring
-- **Status**: ✅ Fully operational with 13,348+ telemetry entries
-
-### Mode 2: Multi-Agent Fleet Monitoring (Planned)
-- **Scope**: Fleet-wide coordination and cross-agent correlation
-- **Storage**: Federated Loki instances with centralized query layer
-- **Use Case**: Parallel development teams, Claude task delegation, enterprise deployments
-- **Status**: 📋 Design phase complete, implementation planned
-
-### Architecture Comparison
-
-| Aspect | Single-Agent (Current) | Multi-Agent (Planned) |
-|--------|----------------------|----------------------|
-| **Scope** | Project-specific monitoring | Fleet-wide coordination |
-| **Storage** | Single Loki (port 3100) | Federated Loki instances |
-| **Identification** | Session ID only | Agent ID + hierarchy |
-| **Dashboard** | Single project view | Fleet command center |
-| **Coordination** | None | Cross-agent correlation |
-| **Use Cases** | Individual development | Teams, delegation, enterprise |
-| **Resource Management** | Local only | Fleet-wide optimization |
-| **Security Monitoring** | Project boundaries | Cross-agent interactions |
-| **Query Scope** | Single instance | Federated cross-instance |
-| **Scalability** | Single Claude instance | 10+ concurrent agents |
+**Current Status**: Fully operational with 11,000+ telemetry entries collected, active Loki service, and working Claude Performance Dashboard - Fixed.
 
 ## Requirements
 
 ### Functional Requirements
-
-#### Single-Agent Mode (Operational)
 - **FR-001**: Capture all Claude tool usage events (Read, Write, Edit, Bash, Grep, etc.)
 - **FR-002**: Generate structured logs with context for each action
 - **FR-003**: Support session-based and project-based activity grouping
 - **FR-004**: Provide centralized dashboard for log visualization and querying
 - **FR-005**: Enable post-incident forensic analysis of agent behavior
 - **FR-006**: Scale to support multiple concurrent Claude sessions
-
-#### Multi-Agent Mode (Planned)
-- **FR-007**: Support agent fleet management and coordination
-- **FR-008**: Track cross-agent interactions and task delegation
-- **FR-009**: Provide session hierarchy and workflow correlation
-- **FR-010**: Enable resource coordination and conflict detection
-- **FR-011**: Support federated storage with centralized query capabilities
-- **FR-012**: Provide fleet-wide analytics and performance comparison
 
 ### Non-Functional Requirements
 - **NFR-001**: Zero impact on Claude Code performance
@@ -113,75 +74,6 @@ A comprehensive security audit and monitoring system for Claude Code agent activ
 }
 ```
 
-### Multi-Agent Enhanced Schema (Planned)
-```json
-{
-  "timestamp": "2025-08-02T03:15:02-04:00",
-  "level": "INFO",
-  "event_type": "file_read",
-  "hook_event": "PreToolUse",
-  
-  // NEW: Agent Identification
-  "agent_context": {
-    "agent_id": "agent-001",
-    "agent_type": "claude-code",
-    "agent_group": "dev-team-alpha",
-    "agent_role": "primary|secondary|coordinator",
-    "instance_id": "claude-instance-uuid"
-  },
-  
-  // ENHANCED: Session Management  
-  "session_context": {
-    "session_id": "current-session-uuid",
-    "parent_session": "master-session-uuid", 
-    "session_hierarchy": ["master", "agent-001", "sub-002"],
-    "coordination_mode": "parallel|sequential|independent",
-    "coordination_level": 2
-  },
-  
-  // ENHANCED: Project & Scope
-  "project_context": {
-    "project_path": "/path/to/project",
-    "project_name": "project-name",
-    "project_group": "organization-alpha",
-    "scope": "project|multi-project|organization",
-    "workspace_id": "workspace-uuid"
-  },
-  
-  // NEW: Cross-Agent Correlation
-  "correlation": {
-    "related_agents": ["agent-002", "agent-003"],
-    "workflow_id": "workflow-uuid", 
-    "task_delegation": {
-      "delegated_from": "main-agent",
-      "delegation_type": "parallel|sequential",
-      "task_type": "analysis|implementation|testing"
-    }
-  },
-  
-  // ENHANCED: Tool & Action Details
-  "tool_context": {
-    "tool_name": "Read",
-    "tool_version": "1.0",
-    "coordination_required": false,
-    "resource_intensive": false
-  },
-  
-  // NEW: Resource Management
-  "resource_usage": {
-    "cpu_percent": 15.2,
-    "memory_mb": 128,
-    "concurrent_operations": 3,
-    "loki_instance": "localhost:3101"
-  },
-  
-  // EXISTING: Action details, metadata, raw_input (unchanged)
-  "action_details": { /* ... */ },
-  "metadata": { /* ... */ },
-  "raw_input": { /* ... */ }
-}
-```
-
 ### Hook Implementation
 - **Location**: `config/claude/hooks/telemetry-hook.sh` (project-specific)
 - **Configuration**: `config/claude/settings.json` (project-scoped)
@@ -212,50 +104,6 @@ A comprehensive security audit and monitoring system for Claude Code agent activ
 4. **Dual Storage**: Primary storage in Loki + local backup in JSONL format
 5. **Query/Analysis**: Real-time queries via HTTP API and Grafana dashboard
 
-### Multi-Agent Architecture (Planned)
-
-#### Federated Storage Design
-```
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   Agent-001     │───▶│  Loki-3101      │───▶│  Federation     │
-│   (Primary)     │    │  (Agent Data)   │    │  Query Layer    │
-└─────────────────┘    └─────────────────┘    │                 │
-                                              │                 │
-┌─────────────────┐    ┌─────────────────┐    │  Loki-3100      │
-│   Agent-002     │───▶│  Loki-3102      │───▶│  (Coordinator)  │
-│   (Secondary)   │    │  (Agent Data)   │    │                 │
-└─────────────────┘    └─────────────────┘    └─────────────────┘
-                                                       │
-                                                       ▼
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   Fleet         │◀───│  Cross-Agent    │◀───│   Grafana       │
-│   Dashboard     │    │  Analytics      │    │   Dashboard     │
-└─────────────────┘    └─────────────────┘    └─────────────────┘
-```
-
-#### Agent Registration & Discovery
-```yaml
-# Agent Registry Configuration
-agents:
-  agent-001:
-    type: "primary"
-    projects: ["project-a", "project-b"]
-    loki_instance: "localhost:3101"
-    coordination_role: "coordinator"
-  agent-002:
-    type: "secondary" 
-    projects: ["project-c"]
-    loki_instance: "localhost:3102"
-    coordination_role: "participant"
-```
-
-#### Cross-Agent Data Flow
-1. **Agent Registration**: Each Claude instance registers with agent registry
-2. **Hook Enhancement**: Multi-agent hook captures agent context and correlation data
-3. **Federated Storage**: Each agent routes to dedicated Loki instance
-4. **Cross-Agent Queries**: Federation layer enables fleet-wide analysis
-5. **Workflow Tracking**: Session hierarchy and task delegation monitoring
-
 ## Current Implementation
 
 ### Overview
@@ -272,11 +120,11 @@ agent-telemetry/
 │   ├── loki/
 │   │   └── loki.yaml                  # Loki configuration
 │   ├── grafana/
-│   │   └── claude-telemetry-dashboard.json
+│   │   └── claude-performance-dashboard-fixed.json # Working dashboard
 │   └── .telemetry-enabled             # Activation marker
 ├── data/
 │   ├── logs/
-│   │   └── claude-telemetry.jsonl     # Local backup logs
+│   │   └── claude-telemetry.jsonl     # Local backup logs (cleaned)
 │   └── loki/                          # Loki storage backend
 ├── scripts/
 │   ├── start-loki.sh                  # Service management
@@ -461,7 +309,8 @@ Claude Code sends this JSON structure via stdin to hook scripts:
 3. **Start Grafana dashboard** (optional):
    ```bash
    ./scripts/start-grafana.sh
-   # Access: http://localhost:3000 (admin/admin)
+   # Access: http://localhost:3000/d/claude-performance-fixed/claude-performance-dashboard-fixed
+   # Login: admin/admin
    ```
 
 ## Operational Procedures
@@ -510,10 +359,11 @@ curl -G "http://localhost:3100/loki/api/v1/query_range" \
 
 ### Current System Status
 - **Loki Service**: Running (PID tracked in logs/loki.pid)
-- **Data Collected**: 13,000+ telemetry entries
-- **Storage Used**: ~188KB in Loki + local backup
+- **Data Collected**: 11,000+ telemetry entries
+- **Storage Used**: ~300KB in Loki + 1MB local backup (cleaned)
 - **API Endpoint**: http://localhost:3100
-- **Dashboard**: http://localhost:3000 (when Grafana running)
+- **Dashboard**: http://localhost:3000/d/claude-performance-fixed/claude-performance-dashboard-fixed
+- **Log Cleanup**: Service logs cleaned (143MB saved)
 
 ### Security Features
 - **Project Scoping**: Only monitors agent-telemetry projects
@@ -568,8 +418,9 @@ mkdir -p data/logs
 **System Impact:**
 - **Hook Overhead**: ~1-5ms per tool execution
 - **Memory Usage**: Loki ~50-100MB, Hook ~minimal
-- **Disk Usage**: ~1-5MB per day of telemetry data
+- **Disk Usage**: ~1MB current telemetry data (logs cleaned)
 - **Network**: Local HTTP only (localhost:3100)
+- **Storage Optimization**: 143MB saved through log cleanup
 
 **Scaling Considerations:**
 - **High Volume**: Increase `ingestion_rate_mb` in Loki config
@@ -593,20 +444,20 @@ mkdir -p data/logs
 - [x] Basic dashboard showing tool usage over time
 - [x] Query functionality for filtering by session/project
 
-### Phase 3: Enhanced Context ✅ **COMPLETED**
+### Phase 3: Enhanced Context
 **Acceptance Criteria**:
-- [x] Capture SuperClaude command context
-- [x] Include persona and reasoning information
-- [x] Add file content change tracking (diffs)
-- [x] Implement comprehensive tool coverage (Bash, Grep, etc.)
+- [ ] Capture SuperClaude command context
+- [ ] Include persona and reasoning information
+- [ ] Add file content change tracking (diffs)
+- [ ] Implement comprehensive tool coverage (Bash, Grep, etc.)
 
 ### Phase 4: Dashboard & Analytics ✅ **COMPLETED**
 **Acceptance Criteria**:
-- [x] Rich Grafana dashboard with multiple views (claude-telemetry-dashboard.json)
-- [x] Security-focused panels (unusual access patterns, scope violations)
-- [x] Historical trend analysis (real-time activity, usage patterns)
-- [x] Export capabilities for compliance reporting (CSV, PDF, PNG exports)
-- [x] **BONUS**: Live streaming panels, tool distribution analysis
+- [x] Performance-focused Grafana dashboard (claude-performance-dashboard-fixed.json)
+- [x] Real-time performance KPIs (response time, throughput, error rate)
+- [x] Workflow intelligence (tool usage patterns, task completion analytics)
+- [x] Working LogQL queries compatible with telemetry data structure
+- [x] **STREAMLINED**: Single working dashboard with no errors
 
 ### Phase 5: Production Operations ✅ **OPERATIONAL**
 **Current Status**:
@@ -614,209 +465,8 @@ mkdir -p data/logs
 - [x] Health monitoring and status checks
 - [x] Error handling and recovery procedures
 - [x] Performance optimization (fire-and-forget delivery)
-- [x] **ACTIVE**: 13,000+ telemetry entries collected and stored
-
-## Multi-Agent Implementation Plan 📋 **DESIGN PHASE**
-
-### Architecture Overview
-
-The multi-agent monitoring system extends the current single-agent implementation to support fleet-wide coordination, cross-agent correlation, and enterprise-scale deployments. This includes parallel development teams, Claude task delegation scenarios, and multi-project environments.
-
-### Key Design Principles
-
-#### 1. **Dual-Mode Architecture**
-- **Backward Compatibility**: Mode 1 (single-agent) remains unchanged and operational
-- **Progressive Enhancement**: Mode 2 (multi-agent) extends existing capabilities
-- **Configuration-Driven**: Switch between modes via configuration files
-
-#### 2. **Agent Identification & Management**
-```yaml
-# config/global/multi-agent.yaml
-mode: "multi-agent"
-coordination:
-  enable_cross_agent_tracking: true
-  session_correlation: true
-  resource_sharing: false
-  
-storage:
-  strategy: "federated"  # federated|partitioned|centralized
-  loki_base_port: 3100
-  agent_port_offset: 1
-  
-dashboard:
-  federation_enabled: true
-  cross_agent_views: true
-  real_time_correlation: true
-```
-
-#### 3. **Enhanced Telemetry Schema**
-The multi-agent schema extends the current structure with:
-- **Agent Context**: Unique identification, groups, roles, instance tracking
-- **Session Hierarchy**: Parent-child relationships, coordination modes, delegation tracking
-- **Cross-Agent Correlation**: Related agents, workflow tracking, task delegation
-- **Resource Management**: Performance metrics, concurrent operations, load distribution
-
-### Implementation Phases
-
-#### **Phase A: Enhanced Schema & Agent ID** (Week 1)
-**Scope**: Extend current system with agent identification
-**Deliverables**:
-- Enhanced telemetry schema with agent context
-- Agent auto-discovery in existing hook
-- Extended single Loki with agent labels
-- Basic agent identification dashboard
-
-**Acceptance Criteria**:
-- [ ] Agent ID captured in all telemetry entries
-- [ ] Agent auto-discovery working in current hook
-- [ ] Dashboard shows agent breakdown
-- [ ] Backward compatibility maintained
-
-#### **Phase B: Multi-Loki Federation** (Week 2)
-**Scope**: Deploy federated storage architecture
-**Deliverables**:
-- Multiple Loki instances (port-based allocation)
-- Federated query layer implementation
-- Agent-specific routing logic
-- Cross-instance health monitoring
-
-**Acceptance Criteria**:
-- [ ] Multiple Loki instances running simultaneously
-- [ ] Agent-specific data routing functional
-- [ ] Federated queries working across instances
-- [ ] Performance maintained across federation
-
-#### **Phase C: Coordination Tracking** (Week 3)
-**Scope**: Implement cross-agent interaction monitoring
-**Deliverables**:
-- Session hierarchy tracking
-- Cross-agent interaction capture
-- Workflow correlation implementation
-- Task delegation monitoring
-
-**Acceptance Criteria**:
-- [ ] Parent-child session relationships tracked
-- [ ] Cross-agent file access patterns monitored
-- [ ] Task delegation flows visible
-- [ ] Workflow correlation working
-
-#### **Phase D: Fleet Dashboard** (Week 4)
-**Scope**: Multi-agent visualization and analytics
-**Deliverables**:
-- Fleet command center dashboard
-- Agent comparison views
-- Cross-agent correlation panels
-- Resource management interface
-
-**Acceptance Criteria**:
-- [ ] Fleet overview dashboard operational
-- [ ] Agent performance comparison available
-- [ ] Cross-agent analytics functional
-- [ ] Resource coordination monitoring active
-
-### Use Case Scenarios
-
-#### **Scenario 1: Parallel Development Teams**
-```yaml
-team_alpha:
-  agents: ["agent-001", "agent-002"]
-  projects: ["frontend-app", "component-library"]
-  coordination: "independent"
-  
-team_beta:
-  agents: ["agent-003", "agent-004"] 
-  projects: ["api-service", "database-layer"]
-  coordination: "sequential"
-  
-monitoring:
-  cross_team_interactions: true
-  resource_conflicts: true
-  integration_points: true
-```
-
-#### **Scenario 2: Claude Task Delegation**
-```yaml
-delegation_hierarchy:
-  main_claude:
-    role: "coordinator"
-    loki_instance: "localhost:3100"
-    sub_agents:
-      - agent_id: "sub-001"
-        task: "file-analysis"
-        loki_instance: "localhost:3101"
-      - agent_id: "sub-002"
-        task: "test-generation"
-        loki_instance: "localhost:3102"
-      - agent_id: "sub-003"
-        task: "documentation"
-        loki_instance: "localhost:3103"
-        
-tracking:
-  delegation_patterns: true
-  sub_agent_performance: true
-  coordination_overhead: true
-```
-
-#### **Scenario 3: Enterprise Multi-Project**
-```yaml
-organization:
-  workspace_id: "enterprise-dev"
-  projects:
-    e_commerce:
-      agent: "agent-project-a"
-      loki_instance: "localhost:3101"
-    analytics:
-      agent: "agent-project-b" 
-      loki_instance: "localhost:3102"
-    mobile:
-      agent: "agent-project-c"
-      loki_instance: "localhost:3103"
-      
-compliance:
-  organization_wide_audit: true
-  cross_project_monitoring: true
-  resource_usage_tracking: true
-```
-
-### Technical Dependencies
-
-#### **Infrastructure Requirements**
-- **Loki Scaling**: Support for multiple concurrent instances
-- **Port Management**: Dynamic port allocation (base + offset strategy)
-- **Resource Coordination**: CPU, memory, and storage federation
-- **Network Configuration**: Inter-instance communication setup
-
-#### **Configuration Management**
-- **Hierarchical Config**: Global → Agent Group → Individual Agent
-- **Dynamic Registration**: Runtime agent discovery and registration
-- **Policy Management**: Resource sharing, coordination rules
-- **Health Monitoring**: Multi-instance health checks and failover
-
-#### **Dashboard Architecture**
-- **Multi-Level Views**: Fleet → Group → Individual Agent
-- **Real-Time Correlation**: Cross-agent interaction visualization
-- **Performance Analytics**: Comparative metrics and trend analysis
-- **Security Monitoring**: Fleet-wide boundary and policy enforcement
-
-### Success Metrics
-
-#### **Performance Targets**
-- **Agent Registration**: <100ms for new agent discovery
-- **Cross-Agent Queries**: <2s for fleet-wide analytics
-- **Resource Overhead**: <10% additional CPU/memory per agent
-- **Federation Latency**: <500ms for cross-instance queries
-
-#### **Functionality Goals**
-- **Agent Coordination**: 100% task delegation tracking
-- **Resource Management**: Zero conflicts in concurrent operations
-- **Security Monitoring**: Complete cross-agent boundary detection
-- **Scalability**: Support for 10+ concurrent agents
-
-#### **Compliance & Audit**
-- **Fleet-Wide Audit Trail**: Complete activity correlation
-- **Policy Enforcement**: Automated boundary and resource compliance
-- **Forensic Analysis**: Cross-agent investigation capabilities
-- **Reporting**: Organization-wide compliance exports
+- [x] **ACTIVE**: 11,000+ telemetry entries collected and stored
+- [x] **OPTIMIZED**: Log cleanup completed (143MB disk space recovered)
 
 ## Success Criteria ✅ **ACHIEVED**
 
@@ -835,11 +485,12 @@ compliance:
 - ✅ **Compliance Support**: Structured logs with tamper-proof timestamps
 
 ### Current Performance Metrics
-- **Data Volume**: 13,000+ telemetry entries successfully collected
-- **Storage Efficiency**: ~188KB in Loki + local JSONL backup
+- **Data Volume**: 11,000+ telemetry entries successfully collected
+- **Storage Efficiency**: ~300KB in Loki + 1MB local backup (post-cleanup)
 - **Query Performance**: Sub-second response times for dashboard queries
 - **System Reliability**: Loki service running continuously with PID tracking
 - **API Availability**: HTTP endpoint accessible at localhost:3100
+- **Disk Optimization**: 143MB recovered through intelligent log cleanup
 
 ## Technical Architecture
 
@@ -861,7 +512,7 @@ compliance:
 ```
 data/
 ├── logs/
-│   └── claude-telemetry.jsonl    # Local backup (crash recovery)
+│   └── claude-telemetry.jsonl    # Local backup (cleaned, 1MB)
 ├── loki/
 │   ├── chunks/                   # Primary log storage
 │   ├── rules/                    # Query rules
@@ -908,12 +559,12 @@ curl -G "http://localhost:3100/loki/api/v1/query_range" \
 ## System Monitoring
 
 ### Grafana Dashboard Features ✅ **ACTIVE**
-- **Real-time Activity Rate**: Live tool usage monitoring
-- **Active Sessions**: Current session tracking
-- **Tool Distribution**: Usage patterns by tool type
-- **Timeline Views**: File operations and command executions
-- **Security Panels**: Scope violation detection
-- **Export Capabilities**: CSV, PDF, PNG formats
+- **Performance KPIs**: Response time, throughput, error rate, active sessions
+- **Tool Performance Analysis**: Performance trends and bottleneck identification
+- **Workflow Intelligence**: Tool usage patterns and activity distribution
+- **Session Analytics**: Operations per session and productivity metrics
+- **Live Activity Stream**: Real-time monitoring of tool operations
+- **Working Queries**: Simplified LogQL compatible with data structure
 
 ### Health Monitoring ✅ **OPERATIONAL**
 ```bash
@@ -958,51 +609,23 @@ tail -f data/logs/claude-telemetry.jsonl
 
 ## Future Enhancements (Roadmap)
 
-### Phase 6: Multi-Agent Implementation 📋 **DESIGN COMPLETE**
-**Timeline**: 4 weeks (Phases A-D)
-**Priority**: High - Addresses parallel Claude deployments
-
-#### Phase A: Enhanced Schema & Agent ID (Week 1)
-- Agent identification and auto-discovery
-- Extended telemetry schema with agent context
-- Basic fleet dashboard views
-- Backward compatibility maintenance
-
-#### Phase B: Multi-Loki Federation (Week 2) 
-- Multiple Loki instances with port-based allocation
-- Federated query layer for cross-instance analytics
-- Agent-specific routing and data isolation
-- Cross-instance health monitoring
-
-#### Phase C: Coordination Tracking (Week 3)
-- Session hierarchy and parent-child relationships
-- Cross-agent interaction monitoring
-- Task delegation flow tracking
-- Workflow correlation implementation
-
-#### Phase D: Fleet Dashboard (Week 4)
-- Fleet command center with real-time monitoring
-- Agent performance comparison and analytics
-- Cross-agent correlation panels
-- Resource coordination and conflict detection
-
-### Phase 7: Advanced Analytics
+### Phase 6: Advanced Analytics
 - Real-time alerting for security violations
 - Machine learning for anomaly detection
 - Risk scoring and behavioral baselines
 - Integration with external security tools (SIEM)
 
-### Phase 8: Enterprise Multi-Agent Features
-- Encrypted cross-agent communication
-- Role-based access control for fleet dashboards
-- Automated compliance reporting across agents
-- Integration with enterprise monitoring systems (SIEM, APM)
+### Phase 7: Multi-Project Support
+- Multi-tenant support for team environments
+- Cross-project correlation analysis
+- Permission profile enforcement integration
+- Centralized monitoring dashboard
 
-### Phase 9: Advanced Coordination
-- Intelligent workload distribution across agents
-- Automated conflict resolution for resource access
-- Performance-based agent selection and routing
-- Predictive scaling for agent fleet management
+### Phase 8: Enterprise Features
+- Encrypted log storage and transmission
+- Role-based access control for dashboards
+- Automated compliance reporting
+- Integration with enterprise monitoring systems
 
 ## Additional Resources
 
@@ -1019,6 +642,6 @@ tail -f data/logs/claude-telemetry.jsonl
 
 ### Access Points
 - **Loki API**: http://localhost:3100
-- **Grafana Dashboard**: http://localhost:3000 (admin/admin)
-- **Local Logs**: `data/logs/claude-telemetry.jsonl`
+- **Grafana Dashboard**: http://localhost:3000/d/claude-performance-fixed/claude-performance-dashboard-fixed (admin/admin)
+- **Local Logs**: `data/logs/claude-telemetry.jsonl` (cleaned, 1MB)
 - **System Status**: `./scripts/status.sh`
