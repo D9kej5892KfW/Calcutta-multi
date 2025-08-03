@@ -71,36 +71,57 @@ if [[ -n "$FILE_PATH" && -f "$FILE_PATH" ]]; then
     fi
 fi
 
-# Create telemetry log entry
-LOG_ENTRY=$(cat <<EOF
-{
-  "timestamp": "$TIMESTAMP",
-  "level": "INFO",
-  "event_type": "$EVENT_TYPE",
-  "hook_event": "$HOOK_EVENT",
-  "session_id": "$SESSION_ID",
-  "project_path": "$PROJECT_PATH",
-  "project_name": "$PROJECT_NAME",
-  "tool_name": "$TOOL_NAME",
-  "telemetry_enabled": $TELEMETRY_ENABLED,
-  "action_details": {
-    "file_path": "$FILE_PATH",
-    "size_bytes": $FILE_SIZE,
-    "outside_project_scope": $OUTSIDE_SCOPE,
-    "command": "${COMMAND:-}",
-    "search_pattern": "${PATTERN:-}",
-    "search_path": "${SEARCH_PATH:-}"
-  },
-  "metadata": {
-    "claude_version": "4.0",
-    "telemetry_version": "1.0.0",
-    "user_id": "jeff",
-    "scope": "project"
-  },
-  "raw_input": $JSON_INPUT
+# Escape JSON strings to prevent parsing errors
+escape_json_string() {
+    local input="$1"
+    # Escape backslashes first, then quotes, then other special characters
+    echo "$input" | sed 's/\\/\\\\/g; s/"/\\"/g; s/	/\\t/g; s/$/\\n/g' | tr -d '\n'
 }
-EOF
-)
+
+# Create telemetry log entry using jq for proper JSON encoding
+LOG_ENTRY=$(jq -n \
+  --arg timestamp "$TIMESTAMP" \
+  --arg level "INFO" \
+  --arg event_type "$EVENT_TYPE" \
+  --arg hook_event "$HOOK_EVENT" \
+  --arg session_id "$SESSION_ID" \
+  --arg project_path "$PROJECT_PATH" \
+  --arg project_name "$PROJECT_NAME" \
+  --arg tool_name "$TOOL_NAME" \
+  --argjson telemetry_enabled "$TELEMETRY_ENABLED" \
+  --arg file_path "$FILE_PATH" \
+  --argjson size_bytes "$FILE_SIZE" \
+  --argjson outside_scope "$OUTSIDE_SCOPE" \
+  --arg command "${COMMAND:-}" \
+  --arg search_pattern "${PATTERN:-}" \
+  --arg search_path "${SEARCH_PATH:-}" \
+  --argjson raw_input "$JSON_INPUT" \
+  '{
+    timestamp: $timestamp,
+    level: $level,
+    event_type: $event_type,
+    hook_event: $hook_event,
+    session_id: $session_id,
+    project_path: $project_path,
+    project_name: $project_name,
+    tool_name: $tool_name,
+    telemetry_enabled: $telemetry_enabled,
+    action_details: {
+      file_path: $file_path,
+      size_bytes: $size_bytes,
+      outside_project_scope: $outside_scope,
+      command: $command,
+      search_pattern: $search_pattern,
+      search_path: $search_path
+    },
+    metadata: {
+      claude_version: "4.0",
+      telemetry_version: "1.0.0",
+      user_id: "jeff",
+      scope: "project"
+    },
+    raw_input: $raw_input
+  }')
 
 # Create logs directory if it doesn't exist (minimal backup only)
 mkdir -p "$PROJECT_PATH/data/logs"
@@ -138,10 +159,14 @@ if [[ "$TELEMETRY_ENABLED" == "true" ]]; then
 EOF
 )
     
+    # Debug: Log the payload being sent
+    echo "=== DEBUG $(date) ===" >> /tmp/loki_debug.log
+    echo "PAYLOAD: $LOKI_PAYLOAD" >> /tmp/loki_debug.log
+    
     # Send to Loki (fire and forget, don't block if Loki is down)
     curl -s -H "Content-Type: application/json" \
          -XPOST "http://localhost:3100/loki/api/v1/push" \
-         -d "$LOKI_PAYLOAD" &>/dev/null &
+         -d "$LOKI_PAYLOAD" >> /tmp/loki_debug.log 2>&1 &
 fi
 
 # Return success to continue tool execution
