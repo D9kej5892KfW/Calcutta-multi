@@ -59,9 +59,7 @@ agent-telemetry/
 │   │   └── loki-full.yaml             # Full Loki configuration with retention
 │   ├── grafana/
 │   │   ├── grafana.ini                # Grafana configuration
-│   │   ├── claude-telemetry-dashboard-enhanced.json  # Security monitoring dashboard
-│   │   ├── claude-performance-dashboard.json         # Performance intelligence dashboard
-│   │   └── claude-telemetry-simple-dashboard.json    # Simple working dashboard
+│   │   └── claude-performance-dashboard-fixed.json   # Performance monitoring dashboard
 │   └── .telemetry-enabled             # Activation marker file
 ├── bin/
 │   ├── loki                           # Loki binary (v3.5.3)
@@ -111,13 +109,10 @@ agent-telemetry/
 ./scripts/start-grafana.sh
 ```
 
-### 5. Access Dashboards
-- **URL**: http://localhost:3000
+### 5. Access Dashboard
+- **URL**: http://localhost:3000/d/claude-performance-fixed/claude-performance-dashboard-fixed
 - **Login**: admin/admin
-- **Available Dashboards**:
-  - **Security Monitoring**: "Claude Agent Telemetry - Security Monitoring Dashboard"
-  - **Performance Intelligence**: "Claude Performance & Development Intelligence"
-  - **Simple Working**: "Claude Agent Telemetry - Simple Working Dashboard"
+- **Dashboard**: "Claude Performance Dashboard - Fixed"
 
 ### 6. Stop Services
 ```bash
@@ -390,28 +385,21 @@ Add debug output to hook script:
 
 *Note: Core telemetry collection, log aggregation, dashboard visualization, and security monitoring features are fully operational.*
 
-## 📊 **Dashboard Options**
+## 📊 **Performance Monitoring Dashboard**
 
-### **Security Monitoring Dashboard**
-- **Focus**: Security boundary violations, unauthorized access, compliance monitoring
-- **File**: `claude-telemetry-dashboard-enhanced.json`
-- **Use Case**: Security teams, compliance auditing, incident investigation
+The **Claude Performance Dashboard - Fixed** provides comprehensive monitoring of Claude Code performance metrics, workflow efficiency, and development patterns.
 
-### **Performance Intelligence Dashboard** 🆕
-- **Focus**: Performance metrics, workflow efficiency, development patterns
-- **File**: `claude-performance-dashboard.json` 
-- **Use Case**: Performance optimization, productivity analysis, resource planning
-- **Features**:
-  - ⚡ Real-time performance KPIs (response time, throughput, error rate)
-  - 📈 Tool performance trends and bottleneck identification
-  - 🎯 Task completion analytics and workflow efficiency
-  - 🔧 Tool usage patterns and adoption metrics
-  - 📊 File operation timelines and development activity
+### **Key Features**
+- ⚡ **Real-time Performance KPIs**: Response time, throughput, error rate, active sessions
+- 📈 **Tool Performance Analysis**: Performance trends and bottleneck identification  
+- 🎯 **Workflow Intelligence**: Tool usage patterns and activity distribution
+- 📊 **Session Analytics**: Operations per session and productivity metrics
+- 📝 **Live Activity Stream**: Real-time monitoring of tool operations
 
-### **Simple Working Dashboard**
-- **Focus**: Basic monitoring with reliable queries
-- **File**: `claude-telemetry-simple-dashboard.json`
-- **Use Case**: Quick setup, troubleshooting, minimal resource usage
+### **Dashboard File**
+- **File**: `claude-performance-dashboard-fixed.json`
+- **Working Queries**: Simplified LogQL queries compatible with your telemetry data
+- **No Errors**: Tested and verified to work with existing data structure
 
 ## 📖 **Additional Resources**
 
