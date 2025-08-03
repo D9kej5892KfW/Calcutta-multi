@@ -1,0 +1,467 @@
+{
+  "dashboard": {
+    "id": null,
+    "uid": "claude-simple-monitor",
+    "title": "Claude Agent Telemetry - Simple Working Dashboard",
+    "description": "Robust monitoring dashboard using simple log queries that work around JSON parsing issues",
+    "tags": ["claude", "telemetry", "simple", "working"],
+    "timezone": "browser",
+    "refresh": "5s",
+    "time": {
+      "from": "now-1h",
+      "to": "now"
+    },
+    "panels": [
+      {
+        "id": 1,
+        "title": "📊 Total Log Entries",
+        "type": "stat",
+        "description": "Simple count of all telemetry entries",
+        "targets": [
+          {
+            "expr": "sum(count_over_time({service=\"claude-telemetry\"}[1h]))",
+            "refId": "A",
+            "datasource": {
+              "type": "loki",
+              "uid": "aetvioshimfwge"
+            }
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "fixed",
+              "fixedColor": "blue"
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "blue",
+                  "value": null
+                }
+              ]
+            },
+            "unit": "short"
+          }
+        },
+        "gridPos": {
+          "h": 4,
+          "w": 6,
+          "x": 0,
+          "y": 0
+        },
+        "options": {
+          "reduceOptions": {
+            "values": false,
+            "calcs": ["lastNotNull"],
+            "fields": ""
+          },
+          "orientation": "auto",
+          "textMode": "auto",
+          "colorMode": "background"
+        }
+      },
+      {
+        "id": 2,
+        "title": "⚡ Activity Rate",
+        "type": "stat",
+        "description": "Events per minute",
+        "targets": [
+          {
+            "expr": "sum(rate({service=\"claude-telemetry\"}[1m]))",
+            "refId": "A",
+            "datasource": {
+              "type": "loki",
+              "uid": "aetvioshimfwge"
+            }
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "yellow",
+                  "value": 5
+                },
+                {
+                  "color": "red",
+                  "value": 10
+                }
+              ]
+            },
+            "unit": "reqps"
+          }
+        },
+        "gridPos": {
+          "h": 4,
+          "w": 6,
+          "x": 6,
+          "y": 0
+        },
+        "options": {
+          "reduceOptions": {
+            "values": false,
+            "calcs": ["lastNotNull"],
+            "fields": ""
+          },
+          "orientation": "auto",
+          "textMode": "auto",
+          "colorMode": "background"
+        }
+      },
+      {
+        "id": 3,
+        "title": "🔧 Tool Usage Count",
+        "type": "stat",
+        "description": "Tool-related entries",
+        "targets": [
+          {
+            "expr": "sum(count_over_time({service=\"claude-telemetry\"} |~ \"tool\"[1h]))",
+            "refId": "A",
+            "datasource": {
+              "type": "loki",
+              "uid": "aetvioshimfwge"
+            }
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "fixed",
+              "fixedColor": "orange"
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "orange",
+                  "value": null
+                }
+              ]
+            },
+            "unit": "short"
+          }
+        },
+        "gridPos": {
+          "h": 4,
+          "w": 6,
+          "x": 12,
+          "y": 0
+        },
+        "options": {
+          "reduceOptions": {
+            "values": false,
+            "calcs": ["lastNotNull"],
+            "fields": ""
+          },
+          "orientation": "auto",
+          "textMode": "auto",
+          "colorMode": "background"
+        }
+      },
+      {
+        "id": 4,
+        "title": "🚨 Error Entries",
+        "type": "stat",
+        "description": "Entries containing error indicators",
+        "targets": [
+          {
+            "expr": "sum(count_over_time({service=\"claude-telemetry\"} |~ \"(?i)error|fail|exception\"[1h]))",
+            "refId": "A",
+            "datasource": {
+              "type": "loki",
+              "uid": "aetvioshimfwge"
+            }
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "mappings": [
+              {
+                "options": {
+                  "0": {
+                    "text": "CLEAN"
+                  }
+                },
+                "type": "value"
+              }
+            ],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "yellow",
+                  "value": 1
+                },
+                {
+                  "color": "red",
+                  "value": 5
+                }
+              ]
+            },
+            "unit": "short"
+          }
+        },
+        "gridPos": {
+          "h": 4,
+          "w": 6,
+          "x": 18,
+          "y": 0
+        },
+        "options": {
+          "reduceOptions": {
+            "values": false,
+            "calcs": ["lastNotNull"],
+            "fields": ""
+          },
+          "orientation": "auto",
+          "textMode": "auto",
+          "colorMode": "background"
+        }
+      },
+      {
+        "id": 5,
+        "title": "📈 Activity Timeline",
+        "type": "timeseries",
+        "description": "Simple activity rate over time",
+        "targets": [
+          {
+            "expr": "sum(rate({service=\"claude-telemetry\"}[2m]))",
+            "refId": "A",
+            "datasource": {
+              "type": "loki",
+              "uid": "aetvioshimfwge"
+            }
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "fixed",
+              "fixedColor": "blue"
+            },
+            "custom": {
+              "axisLabel": "Events/sec",
+              "axisPlacement": "auto",
+              "drawStyle": "line",
+              "fillOpacity": 20,
+              "lineWidth": 2,
+              "pointSize": 5,
+              "showPoints": "auto",
+              "spanNulls": false
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                }
+              ]
+            },
+            "unit": "reqps"
+          }
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 24,
+          "x": 0,
+          "y": 4
+        },
+        "options": {
+          "legend": {
+            "calcs": ["last", "max"],
+            "displayMode": "list",
+            "placement": "bottom"
+          },
+          "tooltip": {
+            "mode": "single",
+            "sort": "none"
+          }
+        }
+      },
+      {
+        "id": 6,
+        "title": "🔄 Recent Activity Stream (Raw Logs)",
+        "type": "logs",
+        "description": "Live stream of telemetry entries - works without JSON parsing",
+        "targets": [
+          {
+            "expr": "{service=\"claude-telemetry\"}",
+            "refId": "A",
+            "datasource": {
+              "type": "loki",
+              "uid": "aetvioshimfwge"
+            }
+          }
+        ],
+        "gridPos": {
+          "h": 12,
+          "w": 24,
+          "x": 0,
+          "y": 12
+        },
+        "options": {
+          "showTime": true,
+          "showLabels": true,
+          "showCommonLabels": false,
+          "wrapLogMessage": true,
+          "prettifyLogMessage": false,
+          "enableLogDetails": true,
+          "dedupStrategy": "none",
+          "sortOrder": "Descending"
+        }
+      },
+      {
+        "id": 7,
+        "title": "🔧 Tool Mentions",
+        "type": "timeseries",
+        "description": "Activity containing tool references",
+        "targets": [
+          {
+            "expr": "sum(rate({service=\"claude-telemetry\"} |~ \"Bash|Read|Write|Edit\"[2m]))",
+            "refId": "A",
+            "datasource": {
+              "type": "loki",
+              "uid": "aetvioshimfwge"
+            },
+            "legendFormat": "Tool Activity"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "fixed",
+              "fixedColor": "orange"
+            },
+            "custom": {
+              "axisLabel": "Tool Events/sec",
+              "axisPlacement": "auto",
+              "drawStyle": "bars",
+              "fillOpacity": 80,
+              "lineWidth": 1,
+              "pointSize": 5,
+              "showPoints": "never",
+              "spanNulls": false
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "orange",
+                  "value": null
+                }
+              ]
+            },
+            "unit": "reqps"
+          }
+        },
+        "gridPos": {
+          "h": 6,
+          "w": 12,
+          "x": 0,
+          "y": 24
+        },
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "hidden",
+            "placement": "bottom"
+          },
+          "tooltip": {
+            "mode": "single",
+            "sort": "none"
+          }
+        }
+      },
+      {
+        "id": 8,
+        "title": "📊 Session Activity",
+        "type": "timeseries",
+        "description": "Session-based activity detection",
+        "targets": [
+          {
+            "expr": "sum(rate({service=\"claude-telemetry\"} |~ \"session\"[2m]))",
+            "refId": "A",
+            "datasource": {
+              "type": "loki",
+              "uid": "aetvioshimfwge"
+            },
+            "legendFormat": "Session Activity"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "fixed",
+              "fixedColor": "green"
+            },
+            "custom": {
+              "axisLabel": "Session Events/sec",
+              "axisPlacement": "auto",
+              "drawStyle": "line",
+              "fillOpacity": 30,
+              "lineWidth": 2,
+              "pointSize": 5,
+              "showPoints": "auto",
+              "spanNulls": false
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                }
+              ]
+            },
+            "unit": "reqps"
+          }
+        },
+        "gridPos": {
+          "h": 6,
+          "w": 12,
+          "x": 12,
+          "y": 24
+        },
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "hidden",
+            "placement": "bottom"
+          },
+          "tooltip": {
+            "mode": "single",
+            "sort": "none"
+          }
+        }
+      }
+    ],
+    "schemaVersion": 27,
+    "version": 1
+  },
+  "overwrite": true
+}

@@ -17,7 +17,7 @@
         "type": "stat",
         "targets": [
           {
-            "expr": "sum(rate({service=\"claude-telemetry\"}[1m]))",
+            "expr": "sum(rate({service=\"claude-telemetry\", __error__!=\"JSONParserErr\"}[1m]))",
             "refId": "A",
             "datasource": {
               "type": "loki",
@@ -76,7 +76,7 @@
         "type": "stat",
         "targets": [
           {
-            "expr": "count(count by (session) (rate({service=\"claude-telemetry\"}[5m])))",
+            "expr": "count(count by (session) (rate({service=\"claude-telemetry\", __error__!=\"JSONParserErr\"}[5m])))",
             "refId": "A",
             "datasource": {
               "type": "loki",
@@ -135,7 +135,7 @@
         "type": "stat",
         "targets": [
           {
-            "expr": "sum(count_over_time({service=\"claude-telemetry\"}[2h]))",
+            "expr": "sum(count_over_time({service=\"claude-telemetry\", __error__!=\"JSONParserErr\"}[2h]))",
             "refId": "A",
             "datasource": {
               "type": "loki",
@@ -245,7 +245,7 @@
         "type": "timeseries",
         "targets": [
           {
-            "expr": "count by (tool) (rate({service=\"claude-telemetry\"}[5m]))",
+            "expr": "count by (tool) (rate({service=\"claude-telemetry\", __error__!=\"JSONParserErr\"}[5m]))",
             "refId": "A",
             "datasource": {
               "type": "loki",
@@ -324,7 +324,7 @@
         "type": "piechart",
         "targets": [
           {
-            "expr": "sum by (event) (count_over_time({service=\"claude-telemetry\"}[2h]))",
+            "expr": "sum by (event) (count_over_time({service=\"claude-telemetry\", __error__!=\"JSONParserErr\"}[2h]))",
             "refId": "A",
             "datasource": {
               "type": "loki",
@@ -504,7 +504,7 @@
         "type": "piechart",
         "targets": [
           {
-            "expr": "sum by (tool) (count_over_time({service=\"claude-telemetry\"}[2h]))",
+            "expr": "sum by (tool) (count_over_time({service=\"claude-telemetry\", __error__!=\"JSONParserErr\"}[2h]))",
             "refId": "A",
             "datasource": {
               "type": "loki",
@@ -560,7 +560,7 @@
         "type": "timeseries",
         "targets": [
           {
-            "expr": "count by (session) (rate({service=\"claude-telemetry\"}[5m]))",
+            "expr": "count by (session) (rate({service=\"claude-telemetry\", __error__!=\"JSONParserErr\"}[5m]))",
             "refId": "A",
             "datasource": {
               "type": "loki",
@@ -727,7 +727,7 @@
         "type": "timeseries",
         "targets": [
           {
-            "expr": "sum(rate({service=\"claude-telemetry\"}[1h]))",
+            "expr": "sum(rate({service=\"claude-telemetry\", __error__!=\"JSONParserErr\"}[1h]))",
             "refId": "A",
             "datasource": {
               "type": "loki",
@@ -807,7 +807,7 @@
         "type": "logs",
         "targets": [
           {
-            "expr": "{service=\"claude-telemetry\"}",
+            "expr": "{service=\"claude-telemetry\", __error__!=\"JSONParserErr\"}",
             "refId": "A",
             "datasource": {
               "type": "loki",

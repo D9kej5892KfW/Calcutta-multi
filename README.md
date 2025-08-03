@@ -59,7 +59,9 @@ agent-telemetry/
 │   │   └── loki-full.yaml             # Full Loki configuration with retention
 │   ├── grafana/
 │   │   ├── grafana.ini                # Grafana configuration
-│   │   └── claude-telemetry-dashboard.json  # Comprehensive dashboard
+│   │   ├── claude-telemetry-dashboard-enhanced.json  # Security monitoring dashboard
+│   │   ├── claude-performance-dashboard.json         # Performance intelligence dashboard
+│   │   └── claude-telemetry-simple-dashboard.json    # Simple working dashboard
 │   └── .telemetry-enabled             # Activation marker file
 ├── bin/
 │   ├── loki                           # Loki binary (v3.5.3)
@@ -109,10 +111,13 @@ agent-telemetry/
 ./scripts/start-grafana.sh
 ```
 
-### 5. Access Dashboard
+### 5. Access Dashboards
 - **URL**: http://localhost:3000
 - **Login**: admin/admin
-- **Dashboard**: "Claude Agent Telemetry - Comprehensive Dashboard"
+- **Available Dashboards**:
+  - **Security Monitoring**: "Claude Agent Telemetry - Security Monitoring Dashboard"
+  - **Performance Intelligence**: "Claude Performance & Development Intelligence"
+  - **Simple Working**: "Claude Agent Telemetry - Simple Working Dashboard"
 
 ### 6. Stop Services
 ```bash
@@ -385,9 +390,34 @@ Add debug output to hook script:
 
 *Note: Core telemetry collection, log aggregation, dashboard visualization, and security monitoring features are fully operational.*
 
+## 📊 **Dashboard Options**
+
+### **Security Monitoring Dashboard**
+- **Focus**: Security boundary violations, unauthorized access, compliance monitoring
+- **File**: `claude-telemetry-dashboard-enhanced.json`
+- **Use Case**: Security teams, compliance auditing, incident investigation
+
+### **Performance Intelligence Dashboard** 🆕
+- **Focus**: Performance metrics, workflow efficiency, development patterns
+- **File**: `claude-performance-dashboard.json` 
+- **Use Case**: Performance optimization, productivity analysis, resource planning
+- **Features**:
+  - ⚡ Real-time performance KPIs (response time, throughput, error rate)
+  - 📈 Tool performance trends and bottleneck identification
+  - 🎯 Task completion analytics and workflow efficiency
+  - 🔧 Tool usage patterns and adoption metrics
+  - 📊 File operation timelines and development activity
+
+### **Simple Working Dashboard**
+- **Focus**: Basic monitoring with reliable queries
+- **File**: `claude-telemetry-simple-dashboard.json`
+- **Use Case**: Quick setup, troubleshooting, minimal resource usage
+
 ## 📖 **Additional Resources**
 
 - **Detailed Architecture**: `docs/claude-agent-telemetry.md`
+- **Dashboard Design Guide**: `docs/dashboard-design-guide.md`
+- **Performance Dashboard Guide**: `docs/performance-dashboard-guide.md` 🆕
 - **Loki Documentation**: https://grafana.com/docs/loki/
 - **LogQL Query Language**: https://grafana.com/docs/loki/latest/logql/
 - **Claude Code Hooks**: https://docs.anthropic.com/claude-code/hooks
