@@ -37,10 +37,10 @@ A comprehensive security audit and monitoring system for Claude Code agent activ
 - **Transport**: HTTP API (localhost:3100) with fire-and-forget delivery
 - **Management**: Bash scripts for service lifecycle
 
-### Log Schema
+### Enhanced Log Schema (Phase 3)
 ```json
 {
-  "timestamp": "2025-08-01T03:15:02-04:00",
+  "timestamp": "2025-08-03T18:03:02-04:00",
   "level": "INFO",
   "event_type": "file_read",
   "hook_event": "PreToolUse",
@@ -55,20 +55,43 @@ A comprehensive security audit and monitoring system for Claude Code agent activ
     "outside_project_scope": false,
     "command": "",
     "search_pattern": "",
-    "search_path": ""
+    "search_path": "",
+    "tool_context": {
+      "file_path": "/home/jeff/claude-code/agent-telemetry/README.md",
+      "limit": 100,
+      "offset": null
+    }
+  },
+  "superclaude_context": {
+    "commands": "/analyze,/improve",
+    "personas": "--persona-architect",
+    "reasoning_level": "standard",
+    "mcp_servers": "--seq,--c7",
+    "flags": "--uc,--validate",
+    "workflow_type": "superclaude"
+  },
+  "file_changes": {
+    "change_id": "16f668a2_20250803T180302_README.md",
+    "file_hash": "sha256:abc123...",
+    "change_type": "pre_change",
+    "diff_lines": 0,
+    "lines_added": 0,
+    "lines_removed": 0
   },
   "metadata": {
     "claude_version": "4.0",
-    "telemetry_version": "1.0.0",
+    "telemetry_version": "2.0.0",
     "user_id": "jeff",
-    "scope": "project"
+    "scope": "project",
+    "user_prompt_preview": "I need to enhance the telemetry system with Phase 3 features..."
   },
   "raw_input": {
     "session_id": "16f668a2-ee15-47fa-b541-fc415b2513d2",
     "hook_event_name": "PreToolUse",
     "tool_name": "Read",
     "tool_input": {
-      "file_path": "/home/jeff/claude-code/agent-telemetry/README.md"
+      "file_path": "/home/jeff/claude-code/agent-telemetry/README.md",
+      "limit": 100
     }
   }
 }
@@ -149,22 +172,38 @@ agent-telemetry/
 - **Non-blocking**: Fire-and-forget HTTP delivery to prevent tool delays
 - **Enable/Disable Control**: Uses `.telemetry-enabled` marker file
 
-**Tool Coverage:**
+**Enhanced Tool Coverage (Phase 3):**
 ```bash
-# File Operations
-Read, Write, Edit, MultiEdit → file_read, file_write, file_edit
+# File Operations (with change tracking)
+Read → file_read (file paths, limits, offsets)
+Write → file_write (content length, file changes)
+Edit/MultiEdit → file_edit (old/new lengths, replacements, diff tracking)
 
 # Command Execution  
-Bash → command_execution (captures full command)
+Bash → command_execution (full command + descriptions)
 
-# Code Analysis
-Grep → code_search (captures patterns and paths)
+# Code Analysis & Search
+Grep → code_search (patterns, paths, output modes)
+Glob → file_search (glob patterns, search paths)
+LS → directory_list (directory paths)
 
-# Task Management
-TodoWrite → tool_usage
+# Task Management & Workflow
+TodoWrite → task_management (todo counts, task details)
+Task → sub_agent_delegation (descriptions, subagent types)
 
-# AI Operations
-Task, WebFetch, WebSearch → tool_usage
+# AI Operations & External Services
+WebFetch → web_fetch (URLs, prompts)
+WebSearch → web_search (search queries)
+
+# Notebook Operations
+NotebookRead/NotebookEdit → notebook_operation (notebook paths)
+
+# SuperClaude Context Detection (NEW)
+- Commands: /analyze, /build, /implement, /improve, /design, etc.
+- Personas: --persona-architect, --persona-frontend, --persona-backend, etc.
+- Reasoning: --think, --think-hard, --ultrathink
+- MCP Servers: --seq, --c7, --magic, --play, --all-mcp
+- Workflow Flags: --uc, --plan, --validate, --delegate, --wave-mode, etc.
 ```
 
 #### 2. Hook Configuration (`config/claude/settings.json`)
@@ -432,7 +471,7 @@ mkdir -p data/logs
 
 ### Phase 1: Core Telemetry (MVP) ✅ **COMPLETED**
 **Acceptance Criteria**:
-- [x] Hook captures Read, Write, Edit tool usage
+- [x] Hook captures Read, Write, Edit tool usageF
 - [x] Generates structured JSON logs locally
 - [x] Basic log schema implemented
 - [x] Session and project identification working
@@ -444,12 +483,12 @@ mkdir -p data/logs
 - [x] Basic dashboard showing tool usage over time
 - [x] Query functionality for filtering by session/project
 
-### Phase 3: Enhanced Context
+### Phase 3: Enhanced Context ✅ **COMPLETED**
 **Acceptance Criteria**:
-- [ ] Capture SuperClaude command context
-- [ ] Include persona and reasoning information
-- [ ] Add file content change tracking (diffs)
-- [ ] Implement comprehensive tool coverage (Bash, Grep, etc.)
+- [x] Capture SuperClaude command context (commands, personas, flags, reasoning levels)
+- [x] Include persona and reasoning information in telemetry data
+- [x] Add file content change tracking (pre/post hashes, diff summaries)
+- [x] Implement comprehensive tool coverage (all Claude Code tools supported)
 
 ### Phase 4: Dashboard & Analytics ✅ **COMPLETED**
 **Acceptance Criteria**:
