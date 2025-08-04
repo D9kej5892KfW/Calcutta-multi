@@ -39,6 +39,16 @@ Thumbs.db
 *.tar.xz
 *.gz
 
+# ===== PYTHON ML ENVIRONMENT (Phase 6.2) =====
+# Virtual environment and ML artifacts (not relevant for code context)
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+data/analytics/models/*.joblib
+data/analytics/features/*.csv
+
 # ===== KEEP FOR CONTEXT =====
 # These files ARE included (commented for clarity):
 # config/              - Configuration files (essential)
