@@ -367,7 +367,7 @@ Add debug output to hook script:
 ### **Performance Monitoring Dashboard**
 The main performance dashboard provides comprehensive real-time monitoring of Claude Code activities, tool usage patterns, and system metrics.
 
-*[Screenshot will be placed here showing the performance dashboard with real-time metrics, tool usage charts, and activity timeline]*
+![Basic Dashboard 1](screenshots/Basic-dashboard-1.png)
 
 **Key Features:**
 - Real-time activity rates and session monitoring
@@ -375,16 +375,22 @@ The main performance dashboard provides comprehensive real-time monitoring of Cl
 - File operations timeline and command execution metrics
 - Live activity stream with 30-second refresh
 
-### **Security & Analytics Dashboard** 
-Advanced dashboard featuring security monitoring, behavioral analysis, and ML-based anomaly detection capabilities.
+### **Advanced Analytics & Monitoring**
+Comprehensive analytics showing detailed tool usage patterns, session metrics, and operational insights.
 
-*[Screenshot will be placed here showing the security dashboard with threat detection, behavioral analytics, and risk scoring]*
+![Basic Dashboard 2](screenshots/Basic-dashboard-2.png)
 
-**Key Features:**
-- Real-time security violation detection
-- ML-powered behavioral pattern analysis
-- Risk scoring and anomaly alerts
-- Project boundary enforcement monitoring
+### **System Overview & Metrics**
+System-wide monitoring dashboard displaying telemetry health, data processing status, and performance indicators.
+
+![Basic Dashboard 3](screenshots/Basic-dashboard-3.png)
+
+**Dashboard Collection Features:**
+- Real-time telemetry data visualization
+- Tool usage analytics and trending
+- Session monitoring and activity tracking
+- Performance metrics and system health indicators
+- Data processing and storage status monitoring
 
 ---
 
