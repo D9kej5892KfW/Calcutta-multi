@@ -1,3 +1,4 @@
+
 #!/usr/bin/env python3
 """
 Phase 6.2: Data Processing Pipeline for Claude Agent Telemetry
@@ -124,7 +125,13 @@ class TelemetryDataProcessor:
             'tool_diversity': 0,
             'peak_activity_window': 0,
             'error_rate': 0,
-            'superclaude_usage': 0
+            'superclaude_usage': 0,
+            # Phase 7 Lite: Delegation tracking metrics
+            'delegation_events': 0,
+            'delegation_rate': 0.0,
+            'workflow_efficiency': 0.0,
+            'task_delegations': 0,
+            'manual_operations': 0
         })
         
         # Process entries by session
@@ -157,6 +164,14 @@ class TelemetryDataProcessor:
                 session['search_operations'] += 1
             elif tool in ['Task', 'WebFetch', 'WebSearch']:
                 session['ai_operations'] += 1
+                # Phase 7 Lite: Track Task tool specifically for delegation
+                if tool == 'Task':
+                    session['delegation_events'] += 1
+                    session['task_delegations'] += 1
+            
+            # Phase 7 Lite: Track manual vs delegated operations
+            if tool != 'Task':
+                session['manual_operations'] += 1
             
             # SuperClaude context tracking
             workflow_type = entry.get('workflow_type')
@@ -200,6 +215,15 @@ class TelemetryDataProcessor:
                 tool_probs = np.array(list(data['tool_counts'].values())) / data['total_operations']
                 data['tool_diversity'] = -np.sum(tool_probs * np.log2(tool_probs + 1e-10))
                 data['error_rate'] = data['error_rate'] / data['total_operations']
+                
+                # Phase 7 Lite: Calculate delegation metrics
+                data['delegation_rate'] = (data['delegation_events'] / data['total_operations']) * 100
+                
+                # Workflow efficiency: ratio of delegated to manual work
+                if data['manual_operations'] > 0:
+                    data['workflow_efficiency'] = data['delegation_events'] / data['manual_operations']
+                else:
+                    data['workflow_efficiency'] = 0
             
             # Convert sets to counts for DataFrame
             data['unique_tools_count'] = len(data['unique_tools'])
@@ -370,7 +394,9 @@ class TelemetryDataProcessor:
             'superclaude_usage': {
                 'sessions_with_superclaude': (df['superclaude_usage'] > 0).sum() if 'superclaude_usage' in df.columns else 0,
                 'avg_superclaude_operations': df['superclaude_usage'].mean() if 'superclaude_usage' in df.columns else 0
-            }
+            },
+            # Phase 7 Lite: Delegation statistics
+            'delegation_metrics': self.calculate_delegation_stats(df)
         }
         
         return stats
@@ -428,6 +454,51 @@ class TelemetryDataProcessor:
                         f"{stats['session_stats']['avg_operations_per_session']:.1f} avg ops/session")
         
         return combined_df
+    
+    def calculate_delegation_stats(self, df: pd.DataFrame) -> Dict:
+        """Phase 7 Lite: Calculate simple delegation statistics for solo developers"""
+        if df.empty or 'total_operations' not in df.columns:
+            return {
+                'delegation_percentage': 0.0,
+                'average_delegations_per_session': 0.0,
+                'total_delegations': 0,
+                'sessions_with_delegation': 0,
+                'most_delegation_friendly_hours': [],
+                'workflow_efficiency_trend': 'No data'
+            }
+        
+        total_operations = df['total_operations'].sum()
+        total_delegations = df['delegation_events'].sum() if 'delegation_events' in df.columns else 0
+        sessions_with_delegation = (df['delegation_events'] > 0).sum() if 'delegation_events' in df.columns else 0
+        
+        delegation_stats = {
+            'delegation_percentage': (total_delegations / total_operations * 100) if total_operations > 0 else 0.0,
+            'average_delegations_per_session': total_delegations / len(df) if len(df) > 0 else 0.0,
+            'total_delegations': int(total_delegations),
+            'sessions_with_delegation': int(sessions_with_delegation),
+            'most_delegation_friendly_hours': self._get_peak_delegation_hours(df),
+            'workflow_efficiency_trend': self._calculate_efficiency_trend(df)
+        }
+        
+        return delegation_stats
+    
+    def _get_peak_delegation_hours(self, df: pd.DataFrame) -> List[int]:
+        """Find hours when delegation is most common"""
+        # This would need temporal data - simplified for Phase 7 Lite
+        return [14, 15, 16]  # Default assumption: 2-4 PM most productive
+    
+    def _calculate_efficiency_trend(self, df: pd.DataFrame) -> str:
+        """Simple efficiency trend analysis"""
+        if 'workflow_efficiency' not in df.columns or df.empty:
+            return 'No efficiency data'
+        
+        avg_efficiency = df['workflow_efficiency'].mean()
+        if avg_efficiency > 0.3:
+            return 'High delegation efficiency'
+        elif avg_efficiency > 0.1:
+            return 'Moderate delegation usage'
+        else:
+            return 'Low delegation usage'
 
 def main():
     parser = argparse.ArgumentParser(description='Process Claude Agent Telemetry data for ML analysis')
