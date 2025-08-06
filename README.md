@@ -129,12 +129,54 @@ agent-telemetry/
 ./scripts/stop-all.sh
 ```
 
+## 🚀 **Multi-Project Monitoring**
+
+Connect multiple projects to the same Loki server for centralized monitoring:
+
+### **Connect a New Project**
+```bash
+# Connect any project to your telemetry system
+./scripts/connect-project.sh /path/to/your-new-project
+
+# With custom name
+./scripts/connect-project.sh /path/to/project "My Custom Project"
+```
+
+### **Manage Connected Projects**
+```bash
+# List all connected projects
+./scripts/list-connected-projects.sh
+
+# Check connection status
+./scripts/list-connected-projects.sh --status
+
+# Disconnect a project
+./scripts/disconnect-project.sh /path/to/project
+```
+
+### **Multi-Project Benefits**
+- ✅ **Same Loki Server**: All projects send to `localhost:3100`
+- ✅ **Project Separation**: Each project gets unique labels in Grafana
+- ✅ **Same Dashboards**: Filter by project in existing visualizations
+- ✅ **Easy Management**: Simple commands to connect/disconnect
+- ✅ **No Conflicts**: Each project gets its own hook configuration
+
+### **Dashboard Filtering**
+In Grafana dashboards, filter by project:
+```logql
+{service="claude-telemetry", project="my-project-name"}
+```
+
 ## 🔍 Query Examples
 
 ```bash
 # All telemetry data
 curl -G "http://localhost:3100/loki/api/v1/query_range" \
   --data-urlencode 'query={service="claude-telemetry"}'
+
+# Specific project data
+curl -G "http://localhost:3100/loki/api/v1/query_range" \
+  --data-urlencode 'query={service="claude-telemetry", project="my-project"}'
 
 # File operations only
 curl -G "http://localhost:3100/loki/api/v1/query_range" \
@@ -143,11 +185,12 @@ curl -G "http://localhost:3100/loki/api/v1/query_range" \
 
 ## 📊 Architecture
 
-- **Hook System**: Captures all Claude Code tool usage
-- **Loki Storage**: Primary Loki storage with local backup
-- **Project Scoped**: Only monitors agent-telemetry project
-- **Security Focused**: Detects out-of-scope file access
-- **Query Ready**: Structured logs for forensic analysis
+- **Hook System**: Captures all Claude Code tool usage across multiple projects
+- **Loki Storage**: Centralized Loki storage with local backup
+- **Multi-Project Support**: Monitor multiple projects with same infrastructure  
+- **Project Labels**: Each project gets unique identifiers in telemetry data
+- **Security Focused**: Detects out-of-scope file access per project
+- **Query Ready**: Structured logs for forensic analysis with project filtering
 
 ## 📊 **What Gets Monitored**
 
