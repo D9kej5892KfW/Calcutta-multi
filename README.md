@@ -89,7 +89,45 @@ agent-telemetry/
 └── temp/                              # Temporary/download files
 ```
 
-## 🚀 Quick Start
+## 🚀 **Installation & Setup**
+
+### **📋 Two Setup Options:**
+
+#### **Option A: Reference Installation (Recommended)**
+Install once in a central location, monitor multiple projects:
+
+```bash
+# 1. Clone to central location
+mkdir -p ~/tools
+cd ~/tools
+git clone https://github.com/D9kej5892KfW/Calcutta-multi.git agent-telemetry
+
+# 2. Start monitoring services
+cd ~/tools/agent-telemetry
+./scripts/start-loki.sh
+./scripts/start-grafana.sh
+
+# 3. Connect any project from anywhere
+~/tools/agent-telemetry/scripts/connect-project.sh /path/to/your-project "Project Name"
+
+# 4. Access dashboards
+# URL: http://localhost:3000 (admin/admin)
+```
+
+#### **Option B: Project-Specific Installation**
+Install directly in a single project directory:
+
+```bash
+# Clone into your project
+git clone https://github.com/D9kej5892KfW/Calcutta-multi.git
+cd Calcutta-multi
+
+# Follow Quick Start steps below
+```
+
+---
+
+## 🚀 Quick Start (For Option B)
 
 ### 1. Start Loki Service
 ```bash
@@ -127,6 +165,149 @@ agent-telemetry/
 
 # Ultra-quick shutdown
 ./scripts/stop-all.sh
+```
+
+---
+
+## 🎯 **Detailed Setup Guide (Option A - Recommended)**
+
+### **Why Use Reference Installation?**
+- ✅ **One installation monitors unlimited projects**
+- ✅ **Resource efficient** (shared Loki/Grafana servers)
+- ✅ **Clean project separation** (no monitoring code in projects)
+- ✅ **Centralized management** (update once, affects all projects)
+- ✅ **Professional architecture** (enterprise-ready)
+
+### **Complete Setup Process:**
+
+#### **Step 1: Initial System Setup**
+```bash
+# Create tools directory (one time only)
+mkdir -p ~/tools
+cd ~/tools
+
+# Clone the telemetry system
+git clone https://github.com/D9kej5892KfW/Calcutta-multi.git agent-telemetry
+
+# Verify installation
+ls -la ~/tools/agent-telemetry/
+```
+
+#### **Step 2: Start Monitoring Services**
+```bash
+# Navigate to telemetry system
+cd ~/tools/agent-telemetry
+
+# Start Loki (log aggregation server)
+./scripts/start-loki.sh
+
+# Start Grafana (dashboard server)  
+./scripts/start-grafana.sh
+
+# Verify services are running
+./scripts/status.sh
+```
+
+#### **Step 3: Connect Your First Project**
+```bash
+# Connect any project from anywhere on your system
+~/tools/agent-telemetry/scripts/connect-project.sh /path/to/your-project "My Project"
+
+# Example: Connect a web development project
+~/tools/agent-telemetry/scripts/connect-project.sh ~/dev/my-website "Website Project"
+
+# Example: Connect a data analysis project
+~/tools/agent-telemetry/scripts/connect-project.sh ~/analysis/sales-data "Sales Analysis"
+```
+
+#### **Step 4: Verify Connection**
+```bash
+# List all connected projects
+~/tools/agent-telemetry/scripts/list-connected-projects.sh
+
+# Check connection status and data
+~/tools/agent-telemetry/scripts/list-connected-projects.sh --status
+```
+
+#### **Step 5: Use Claude Code Normally**
+```bash
+# Navigate to your project
+cd /path/to/your-project
+
+# Use Claude Code normally - all tool usage is automatically monitored!
+# Read files, write code, run commands - everything is captured
+```
+
+#### **Step 6: View Telemetry in Dashboards**
+- **Open Grafana**: http://localhost:3000
+- **Login**: admin/admin  
+- **Filter by project**: Use `project="Your Project Name"` in queries
+- **View screenshots below** for dashboard examples
+
+### **Managing Multiple Projects:**
+
+```bash
+# Connect additional projects
+~/tools/agent-telemetry/scripts/connect-project.sh ~/projects/app1 "Mobile App"
+~/tools/agent-telemetry/scripts/connect-project.sh ~/work/automation "Automation Scripts"
+
+# List all connected projects  
+~/tools/agent-telemetry/scripts/list-connected-projects.sh
+
+# Disconnect a project if needed
+~/tools/agent-telemetry/scripts/disconnect-project.sh ~/old-project
+
+# View cross-project analytics in Grafana
+# Compare activity: count by (project) (rate({service="claude-telemetry"}[1h]))
+```
+
+### **Directory Structure (Reference Installation):**
+```
+~/tools/agent-telemetry/          ← Central monitoring system
+├── bin/                          ← Loki & Grafana binaries  
+├── scripts/                      ← Management commands
+├── data/                         ← All telemetry data storage
+└── config/                       ← System configuration
+
+~/projects/website/               ← Your actual projects
+├── .claude/hooks/                ← Project-specific telemetry hook
+├── .telemetry-enabled           ← Telemetry marker
+└── your-project-files...
+
+~/work/analysis/                  ← Another project
+├── .claude/hooks/                ← Different project-specific hook  
+├── .telemetry-enabled           ← Telemetry marker
+└── your-project-files...
+```
+
+### **System Maintenance:**
+
+```bash
+# Update telemetry system (affects all projects)
+cd ~/tools/agent-telemetry
+git pull origin main
+
+# Backup telemetry data
+tar -czf ~/telemetry-backup-$(date +%Y%m%d).tar.gz ~/tools/agent-telemetry/data/
+
+# Restart services if needed
+~/tools/agent-telemetry/scripts/shutdown.sh
+~/tools/agent-telemetry/scripts/start-loki.sh
+~/tools/agent-telemetry/scripts/start-grafana.sh
+```
+
+### **Optional: Add to Shell Profile**
+For easier access, add to `~/.bashrc` or `~/.zshrc`:
+```bash
+# Claude Telemetry Shortcuts
+export CLAUDE_TELEMETRY="$HOME/tools/agent-telemetry"
+alias connect-telemetry="$CLAUDE_TELEMETRY/scripts/connect-project.sh"
+alias list-telemetry="$CLAUDE_TELEMETRY/scripts/list-connected-projects.sh"
+alias telemetry-status="$CLAUDE_TELEMETRY/scripts/status.sh"
+
+# Then use from anywhere:
+# connect-telemetry /path/to/project "Project Name"  
+# list-telemetry --status
 ```
 
 ## 🚀 **Multi-Project Monitoring**
