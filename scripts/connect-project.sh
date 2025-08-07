@@ -288,14 +288,21 @@ main() {
         test_telemetry "$project_path" "$project_name"
     fi
     
+    # Update project documentation
+    log_info "Updating project documentation"
+    if [[ -x "$SCRIPT_DIR/update-project-docs.sh" ]]; then
+        "$SCRIPT_DIR/update-project-docs.sh" "$project_path" "$project_name" 2>/dev/null || log_warning "Could not update project documentation"
+    fi
+    
     echo ""
     log_success "Project '$project_name' successfully connected to telemetry system!"
     echo ""
     echo -e "${BLUE}Next steps:${NC}"
     echo "1. Navigate to your project: cd '$project_path'"
-    echo "2. Use Claude Code normally - all tool usage will be monitored"
-    echo "3. View telemetry in Grafana: http://localhost:3000"
-    echo "4. Filter by project: Use 'project=\"$project_name\"' in dashboard queries"
+    echo "2. Check CLAUDE.md for telemetry documentation and management commands"
+    echo "3. Use Claude Code normally - all tool usage will be monitored"
+    echo "4. View telemetry in Grafana: http://localhost:3000"
+    echo "5. Filter by project: Use 'project=\"$project_name\"' in dashboard queries"
     echo ""
     echo -e "${BLUE}Management commands:${NC}"
     echo "• List connected projects: $SCRIPT_DIR/list-connected-projects.sh"
