@@ -229,7 +229,7 @@ LOKI_PAYLOAD=$(cat << EOF
                 "session": "$SESSION_ID"
             },
             "values": [
-                ["$(date +%s%N)", $(echo "$LOG_ENTRY" | jq -c .)]
+                ["$(date +%s%N)", "$(echo "$LOG_ENTRY" | jq -c . | sed 's/"/\\"/g')"]
             ]
         }
     ]
