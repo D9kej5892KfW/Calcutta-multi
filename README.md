@@ -102,17 +102,33 @@ mkdir -p ~/tools
 cd ~/tools
 git clone https://github.com/D9kej5892KfW/Calcutta-multi.git agent-telemetry
 
-# 2. Start monitoring services
+# 2. Install Claude Code commands (one-time setup)
 cd ~/tools/agent-telemetry
+./install-claude-commands.sh
+
+# 3. Start monitoring services
 ./scripts/start-loki.sh
 ./scripts/start-grafana.sh
 
-# 3. Connect any project from anywhere
-~/tools/agent-telemetry/scripts/connect-project.sh /path/to/your-project "Project Name"
+# 4. Connect any project from anywhere using Claude Code commands
+cd /path/to/your-project
+/telemetry
 
-# 4. Access dashboards
+# 5. Access dashboards
 # URL: http://localhost:3000 (admin/admin)
 ```
+
+#### **Claude Code Commands Available After Installation:**
+Once you run `./install-claude-commands.sh`, these commands work from any directory:
+
+- `/telemetry` - Connect current project to telemetry
+- `/telemetry-start` - Start monitoring services
+- `/telemetry-stop` - Stop monitoring services  
+- `/telemetry-status` - Check system status
+- `/telemetry-dashboard` - Open Grafana dashboard
+- `/telemetry-list` - List connected projects
+- `/telemetry-disconnect` - Disconnect current project
+- `/telemetry-logs` - View live telemetry logs
 
 #### **Option B: Project-Specific Installation**
 Install directly in a single project directory:
